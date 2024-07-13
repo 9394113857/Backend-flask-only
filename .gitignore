@@ -5,7 +5,7 @@ site.db
 /flask-project-env/
 
 # Ignore logs folder
-/logs/
+/flaskblog/logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
