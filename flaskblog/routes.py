@@ -12,6 +12,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
 import jwt
 from functools import wraps
+from flask_wtf.csrf import CSRFError
+from flask_wtf.csrf import CSRFProtect
 
 # Set up logger configuration
 logs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -350,6 +352,12 @@ def reset_password(token):
             return jsonify({'message': 'Invalid token'}), 401
     else:
         return jsonify({'message': 'Validation error', 'errors': form.errors}), 400
+    
+# # Example of disabling CSRF protection for specific routes (if needed)
+# @app.route('/unprotected', methods=['POST'])
+# @csrf.exempt # type: ignore
+# def unprotected_route():
+#     return 'No CSRF protection here!'    
 
 # Error handling routes
 @app.errorhandler(400)
@@ -371,3 +379,7 @@ def not_found(error):
 @app.errorhandler(500)
 def internal_error(error):
     return jsonify({'message': 'Internal Server Error'}), 500
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return jsonify({'message': 'CSRF token missing or incorrect'}), 400
