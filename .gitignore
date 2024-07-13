@@ -1,0 +1,42 @@
+# Ignore site database file
+site.db
+
+# Ignore virtual environment
+/flask-project-env/
+
+# Ignore logs folder
+/logs/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database
+*.db
+
+# Environment variables
+*.env
+
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Misc
+.DS_Store
+Thumbs.db
