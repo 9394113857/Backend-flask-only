@@ -79,6 +79,11 @@ def send_verification_email(user):
     msg.html = render_template('verification_email.html', user=user, verification_link=verification_link)
     mail.send(msg)
 
+# Hello World route
+@app.route("/")
+def hello_world():
+    return jsonify(message="Hello, World!")
+
 # Home route
 @app.route("/")
 @app.route("/home")
@@ -112,16 +117,15 @@ def register():
     form = RegistrationForm(data=data)
     if form.validate():
         try:
-            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+            hashed_password = bcrypt.generate_password_hash(form.password).decode('utf-8')
+            user = User(username=form.username, email=form.email, password=hashed_password)
             db.session.add(user)
             db.session.commit()
             # Save the new password to the password history
-            user.update_password_history(form.password.data)
+            user.update_password_history(form.password)
             send_verification_email(user)
             return jsonify({'message': 'User registered successfully. Please check your email for verification instructions.'}), 200
         except Exception as e:
-            logger.error(f"Error in register route: {str(e)}")
             db.session.rollback()
             return jsonify({'message': 'An error occurred. Please try again later.'}), 500
     else:
@@ -152,11 +156,11 @@ def login():
     form = LoginForm(data=data)
     if form.validate():
         try:
-            user = User.query.filter_by(email=form.email.data).first()
-            if user and bcrypt.check_password_hash(user.password, form.password.data):
+            user = User.query.filter_by(email=form.email).first()
+            if user and bcrypt.check_password_hash(user.password, form.password):
                 if user.verified:
                     login_user(user)
-                    access_token = generate_access_token(identity=user.id)
+                    access_token = create_access_token(identity=user.id)
                     response = make_response(jsonify({'message': 'Login successful', 'access_token': access_token}), 200)
                     response.set_cookie('x-access-token', access_token, httponly=True)
                     return response
@@ -165,7 +169,6 @@ def login():
             else:
                 return jsonify({'message': 'Invalid credentials'}), 401
         except Exception as e:
-            logger.error(f"Error in login route: {str(e)}")
             return jsonify({'message': 'An error occurred. Please try again later.'}), 500
     else:
         return jsonify({'message': 'Validation error', 'errors': form.errors}), 400
