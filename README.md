@@ -1,5 +1,5 @@
-# Backend-flask-only
-Backend-flask-only
+# flask_blog_backend
+flask_blog_backend
 
 <div style="border: 1px solid #ccc; border-radius: 4px; padding: 10px; display: inline-block;">
   <span style="font-weight: bold;">Current Branch:</span>
